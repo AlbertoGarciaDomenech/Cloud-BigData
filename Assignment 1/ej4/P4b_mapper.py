@@ -5,9 +5,8 @@ import re
 import math
 
 for line in sys.stdin:
-    words = re.sub(r'\W+', ' ', line).split()
-    
-    if(float(words[1]) == 0):
-        print("1\t" + words[0])
+    movieId,rating = line.split("\t",1)
+    if(float(rating) == 0.0):
+        print("1\t" + movieId)
     else:
-        print(str(math.ceil(float(words[1]))) + "\t" + words[0])
+        print(str(math.ceil(float(rating))) + "\t" + movieId)
