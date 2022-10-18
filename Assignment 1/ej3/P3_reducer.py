@@ -14,6 +14,7 @@ for line in sys.stdin:
             print(previous + '\t' + str(float(agg_val)/sum))
         previous = key
         sum = 0
+        agg_val = 0
     
     sum += 1
     agg_val += float(value)
