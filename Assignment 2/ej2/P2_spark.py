@@ -5,11 +5,9 @@ import re
 conf = SparkConf().setAppName('UrlAccessFrequency')
 sc = SparkContext(conf = conf)
 
-sc.textFile('access_log')\
-  .flatMap(lambda line: line.split("\"")[1])\
-  .filter(lambda word: ("GET" in word))\
-  .filter(lambda word: ("POST" in word))\
-  .filter(lambda word: ("HEAD" in word))\
+sc.textFile(sys.argv[1])\
+  .flatMap(lambda line: line.split("\""))\
+  .filter(lambda line: "GET" in line or "POST" in line or "HEAD" in line)\
   .map(lambda word: (word.split(" ")[1], 1))\
   .reduceByKey(lambda a, b: a+b)\
-  .saveAsTextFile("output3.txt")
+  .saveAsTextFile(sys.argv[2])
