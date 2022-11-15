@@ -1,20 +1,12 @@
-from pyspark import SparkConf, SparkContext
-import sys
-import re
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import year
+import sys 
 import csv
 
-conf = SparkConf().setAppName('StockSummary')
-sc = SparkContext(conf = conf)
+spark = SparkSession.builder.appName('StockSummary').getOrCreate()
 
+googleDF = spark.read.options(inferSchema='True', delimiter=',', header='True').csv(sys.argv[1])
 
-path = "/usr/local/spark/examples/src/main/resources/GOOGLE.csv"
-googleDF = spark.read.option("header", "true").csv(path)
-column_names = next(googleDF)
-date = column_names.index("Date")
-value = column_names.index("Close")
+#googleDF.withColumn('Year',year(googleDF.Date)).select('Year', 'Close').groupBy('Year').avg('Close').show()
 
-googleDF.flatMap(lambda line: re.sub(r'\W+', ' ', line).split())\
-  .map(lambda word: (word.lower(), 1))\
-  .reduceByKey(lambda a, b: a+b)\
-  .saveAsTextFile("output.txt")
-
+googleDF.groupBy(year(googleDF.Date)).avg('Close').show()
